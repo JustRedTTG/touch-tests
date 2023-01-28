@@ -57,10 +57,12 @@ while True:
                 i += 1
     pe.fill.full(pe.color.black)
     if len(fingers) == 2 and not zooming:
+        oldx = round(posx, 2)
+        oldy = round(posy, 2)
         distance = pe.math.dist(fingers[0]['pos'], fingers[1]['pos'])
         zoom_start_pos = pe.math.lerp(
-            fingers[0]['pos'],
-            fingers[1]['pos'],
+            (250, 250),
+            (250, 250),
             distance / 2
         )
         start_scalex = scalex
@@ -73,12 +75,12 @@ while True:
         distance_new = pe.math.dist(fingers[0]['pos'], fingers[1]['pos'])
         change = distance_new - distance
         change *= 0.02
-        scalex = min(max(start_scalex * 1+change, minzoom), maxzoom)
-        scaley = min(max(start_scaley * 1+change, minzoom), maxzoom)
+        scalex = int(min(max(start_scalex * 1+change, minzoom), maxzoom))
+        scaley = int(min(max(start_scaley * 1+change, minzoom), maxzoom))
 
         zoompoint = pe.math.lerp(
-             fingers[0]['pos'],
-             fingers[1]['pos'],
+            (250, 250),
+            (250, 250),
              distance_new / 2
         )
         afterzoomx, afterzoomy = screentoworld(*original)
@@ -97,8 +99,14 @@ while True:
         posy += (fingers[0]['pos'][1] - distance[1])# * 1.5
         distance = fingers[0]['pos']
     else:
+        if zooming:
+            print(f'offset: ({oldx}, {oldy}) world_start_pos: {zoom_start_pos} zoompoint: {zoompoint} start_scale: ({start_scalex}, {start_scaley}) -> offset: ({posx}, {posy}) scale: ({scalex}, {scaley})')
+            print(f'offset_change: ({posx-oldx}, {posy-oldy}) scale_change: ({scalex-start_scalex, scaley-start_scaley})')
         zooming = False
         moving = False
+        posx = int(posx / 500) * 500
+        posy = int(posy / 500) * 500
+
     #
     temp = pe.display_a
     pe.display_a = surface
